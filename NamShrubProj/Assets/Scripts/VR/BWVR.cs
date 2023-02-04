@@ -115,6 +115,19 @@ public class BWVR : MonoBehaviour
         return GetInput(hand).device;
     }
 
+    public static bool SendHaptic(BWHand.BWControllerType hand, float amplitude, float duration)
+    {
+        UnityEngine.XR.InputDevice device = GetDevice(hand);
+
+        HapticCapabilities caps = new HapticCapabilities();
+
+        if ((device != null) && device.TryGetHapticCapabilities(out caps) && caps.supportsImpulse)
+        {
+            device.SendHapticImpulse(0u, amplitude, duration);
+        }
+        return false;
+    }
+
     public static bool IsTrigger(BWHand.BWControllerType hand)
     {
         UnityEngine.XR.InputDevice device = GetDevice(hand);
