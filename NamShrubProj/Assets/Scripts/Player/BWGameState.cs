@@ -22,7 +22,7 @@ public class BWGameState : MonoBehaviour
     }
 
     // Start is called before the first frame update
-    void ResetGame()
+    public void ResetGame()
     {
         isDead = false;
         monsterIndex = Random.Range(0, capsules.Length - 1);
