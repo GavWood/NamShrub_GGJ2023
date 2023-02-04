@@ -9,7 +9,7 @@ public class BWHand : MonoBehaviour
     float HidePoseMarkerTime = 5.0f;
     float HapticTime = 0.01f;
     float LowAmplitude = 0.1f;
-    static float MinDistance = 0.1f;
+    public static float MinDistance = 0.1f;
     public static float distanceToNearestTarget = 0;
     public static int nearestIndex = 0;
 
@@ -55,6 +55,12 @@ public class BWHand : MonoBehaviour
 
     void SendShortHaptics()
     {
+        // Only big haptics when we are dead
+        if (BWGameState.isDead)
+        {
+            BWVR.SendHaptic(handId, 1.0f, 1.0f);
+            return;
+        }
         float currentTime = Time.time;
 
         // Send haptic every HapticTime, then sleep HapticTime, then send again
