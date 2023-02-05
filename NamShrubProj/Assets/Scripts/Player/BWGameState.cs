@@ -19,7 +19,7 @@ public class BWGameState : MonoBehaviour
     [SerializeField]
     public float height = 0.7f;
 
-    public float KillDistance = 0.2f;
+    public float KillDistance = 0.1f;
 
     private void Awake()
     {
