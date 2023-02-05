@@ -8,6 +8,16 @@ public class BWGameState : MonoBehaviour
     public static CapsuleCollider[] capsules;   // Where the holes are
     public static bool isDead = false;          // Are you dead
 
+    AudioSource[] audioSources;
+    [SerializeField]
+    AudioClip death;
+    public BWGameState instance;
+
+    private void Awake()
+    {
+        instance = this;
+    }
+
     private void Start()
     {
         // Get the wood beast
@@ -18,6 +28,7 @@ public class BWGameState : MonoBehaviour
 
         Debug.Log("Capsules: " + capsules.Length);
 
+        audioSources = GetComponentsInChildren<AudioSource>();
         ResetGame();
     }
 
@@ -39,7 +50,11 @@ public class BWGameState : MonoBehaviour
         {
             if (monsterIndex == BWHand.nearestIndex)
             {
-                isDead = true;
+                if( isDead == false )
+                {
+                    isDead = true;
+                    PlayDeathSound();
+                }
             }
         }
 
@@ -49,5 +64,10 @@ public class BWGameState : MonoBehaviour
                       "\nDeath " + isDead;
  
         BWDebug.instance.AddText(text);
+    }
+
+    public void PlayDeathSound()
+    {
+        audioSources[1].PlayOneShot(death);
     }
 }
