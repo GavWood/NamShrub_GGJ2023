@@ -5,13 +5,7 @@ using UnityEngine;
 public class BWHand : MonoBehaviour
 {
     float lastTriggerTime = 0;
-    float lastShortHapticTime = 0;
-    float HidePoseMarkerTime = 5.0f;
-    float HapticTime = 0.01f;
-    float LowAmplitude = 0.1f;
-    public float MinDistance = 0.2f;
-    public float distanceToNearestTarget = 0;
-    public int nearestIndex = 0;
+    float HidePoseMarkerTime = 0;
 
     public enum BWControllerType
     {
@@ -54,62 +48,8 @@ public class BWHand : MonoBehaviour
         }
     }
 
-    void SendShortHaptics()
-    {
-        // Only big haptics when we are dead
-        if (BWGameState.isDead)
-        {
-            BWVR.SendHaptic(handId, 1.0f, 1.0f);
-            return;
-        }
-        float currentTime = Time.time;
-
-        // Send haptic every HapticTime, then sleep HapticTime, then send again
-        if ((currentTime - lastShortHapticTime) > HapticTime * 2)
-        {
-            lastShortHapticTime = Time.time;
-
-            // dist 0   = amp 0.5
-            // dist 0.5 = amp 0 
-            float amp = Mathf.Lerp(LowAmplitude, 0, distanceToNearestTarget);
-
-            // Get very close and your dead
-            // Or the buzz turns off
-            if (distanceToNearestTarget < MinDistance)
-            {
-                amp = 0;
-            }
-            BWVR.SendHaptic(handId, amp, HapticTime);
-        }
-    }
-
-    private void BuildSuspenseWithHaptics()
-    {
-        // The hands position
-        Vector3 position = transform.position;
-
-        distanceToNearestTarget = 1000.0f;
-
-        for (int i = 0; i < BWGameState.capsules.Length; i++)
-        {
-            CapsuleCollider c = BWGameState.capsules[i].GetComponent<CapsuleCollider>();
-
-            Vector3 bottomSpot = c.transform.Find("Target").position;
-
-            float dist = Vector3.Distance(bottomSpot, position);
-
-            if( dist < distanceToNearestTarget)
-            {
-                nearestIndex = i;
-                distanceToNearestTarget = dist;
-            }
-        }
-    }
-
     private void Update()
     {
         ShowAndHideTrigger(); // for menu
-        SendShortHaptics();   // to heighten tension
-        BuildSuspenseWithHaptics();
     }
 }

@@ -5,15 +5,21 @@ using UnityEngine;
 public class BWGameState : MonoBehaviour
 {
     int monsterIndex = 0;                       // Which hole the monster is in
-    public static CapsuleCollider[] capsules;   // Where the holes are
+    public static Transform[] targets;   // Where the holes are
     public static bool isDead = false;          // Are you dead
 
     AudioSource[] audioSources;
+
+    public static BWGameState instance;
+    BWHand[] hands;
+
     [SerializeField]
     AudioClip death;
-    public BWGameState instance;
-    BWHand[] hands;
-    float DeathDistance = 0.1f;
+
+    [SerializeField]
+    public float height = 0.7f;
+
+    public float KillDistance = 0.2f;
 
     private void Awake()
     {
@@ -27,9 +33,9 @@ public class BWGameState : MonoBehaviour
         GameObject woodBeast = BWTransform.FindAlways("WoodBeast").gameObject;
 
         // Get the targets
-        capsules = woodBeast.GetComponentsInChildren<CapsuleCollider>();
+        targets = woodBeast.GetComponentsInChildren<Transform>();
 
-        Debug.Log("Capsules: " + capsules.Length);
+        Debug.Log("Capsules: " + targets.Length);
 
         audioSources = GetComponentsInChildren<AudioSource>();
         ResetGame();
@@ -39,7 +45,7 @@ public class BWGameState : MonoBehaviour
     public void ResetGame()
     {
         isDead = false;
-        monsterIndex = Random.Range(0, capsules.Length - 1);
+        monsterIndex = Random.Range(0, targets.Length - 1);
     }
 
     // Update is called once per frame
@@ -50,26 +56,32 @@ public class BWGameState : MonoBehaviour
         // How far are we away from the bottom of the tube
         for (int i = 0; i < 2; i++)
         {
-            float dist = hands[i].distanceToNearestTarget;
+            Vector3 handPos = hands[i].transform.position;
 
-            // Calculate death
-            if (dist < DeathDistance)
+            Vector3 monsterPos = targets[monsterIndex].position;
+
+            float distance = Vector3.Distance(monsterPos, handPos);
+
+            if( distance < KillDistance )
             {
-                if (monsterIndex == hands[i].nearestIndex)
+                if (isDead == false)
                 {
-                    if (isDead == false)
-                    {
-                        isDead = true;
-                        PlayDeathSound();
-                    }
+                    isDead = true;
+                    PlayDeathSound();
+
+                    BWVR.SendHaptic((BWHand.BWControllerType)i, 1.0f, 5.0f);
                 }
             }
 
+            float handHeight = handPos.y;
+
             // Show the debug string
-            text += "Nearest distance: " + dist +
-                    "\nMonster: " + monsterIndex;          
+            text += "\nHeight " + string.Format("Height: {0:#.00} cm", handHeight + " out of " + height);
+            text += "\nDist " + distance;
         }
+
         text += "\nDeath " + isDead;
+        text += "\nMonster: " + monsterIndex;
 
         BWDebug.instance.AddText(text);
     }
