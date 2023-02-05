@@ -50,6 +50,11 @@ public class BWKeyboard : MonoBehaviour
     {
         return Keyboard.current.leftShiftKey.isPressed;
     }
+
+    public static bool Is_Space_Pressed()
+    {
+        return Keyboard.current.spaceKey.wasPressedThisFrame;
+    }
     public static bool Is_F1_Pressed()
     {
         return Keyboard.current.f1Key.isPressed;
