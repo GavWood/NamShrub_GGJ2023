@@ -12,10 +12,13 @@ public class BWGameState : MonoBehaviour
     [SerializeField]
     AudioClip death;
     public BWGameState instance;
+    BWHand[] hands;
+    float DeathDistance = 0.1f;
 
     private void Awake()
     {
         instance = this;
+        hands = GetComponentsInChildren<BWHand>();
     }
 
     private void Start()
@@ -42,32 +45,37 @@ public class BWGameState : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        // How far are we away from the bottom of the tube
-        float dist = BWHand.distanceToNearestTarget;
+        string text = "";
 
-        // Calculate death
-        if (dist < BWHand.MinDistance)
+        // How far are we away from the bottom of the tube
+        for (int i = 0; i < 2; i++)
         {
-            if (monsterIndex == BWHand.nearestIndex)
+            float dist = hands[i].distanceToNearestTarget;
+
+            // Calculate death
+            if (dist < DeathDistance)
             {
-                if( isDead == false )
+                if (monsterIndex == hands[i].nearestIndex)
                 {
-                    isDead = true;
-                    PlayDeathSound();
+                    if (isDead == false)
+                    {
+                        isDead = true;
+                        PlayDeathSound();
+                    }
                 }
             }
-        }
 
-        // Show the debug string
-        string text = "Nearest distance: " + dist +
-                      "\nMonster: " + monsterIndex +
-                      "\nDeath " + isDead;
- 
+            // Show the debug string
+            text += "Nearest distance: " + dist +
+                    "\nMonster: " + monsterIndex;          
+        }
+        text += "\nDeath " + isDead;
+
         BWDebug.instance.AddText(text);
     }
 
     public void PlayDeathSound()
     {
-        audioSources[1].PlayOneShot(death);
+        audioSources[0].PlayOneShot(death);
     }
 }

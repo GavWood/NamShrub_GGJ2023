@@ -9,9 +9,9 @@ public class BWHand : MonoBehaviour
     float HidePoseMarkerTime = 5.0f;
     float HapticTime = 0.01f;
     float LowAmplitude = 0.1f;
-    public static float MinDistance = 0.1f;
-    public static float distanceToNearestTarget = 0;
-    public static int nearestIndex = 0;
+    public float MinDistance = 0.2f;
+    public float distanceToNearestTarget = 0;
+    public int nearestIndex = 0;
 
     public enum BWControllerType
     {
@@ -36,6 +36,7 @@ public class BWHand : MonoBehaviour
         poseMarker = transform.Find("PoseMarker").gameObject;
         poseMarker.SetActive(false);
     }
+
     void ShowAndHideTrigger()
     {
         // Show the trigger

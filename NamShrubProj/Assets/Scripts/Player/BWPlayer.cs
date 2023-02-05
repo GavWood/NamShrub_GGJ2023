@@ -3,6 +3,7 @@ using UnityEngine;
 public class BWPlayer : MonoBehaviour
 {
     private Transform mainCam;
+    private Transform head;
 
     [SerializeField]
     bool invertLook = false;
@@ -73,6 +74,7 @@ public class BWPlayer : MonoBehaviour
     void Awake()
     {
         mainCam = BWTransform.FindAlways("Main Camera");
+        head = BWTransform.FindAlways("Head");
     }
 
     void Start()
@@ -92,7 +94,7 @@ public class BWPlayer : MonoBehaviour
             return;
         }
 
-        Vector3 headRot = mainCam.transform.eulerAngles;
+        Vector3 headRot = head.transform.eulerAngles;
         headRot.x = 0;
         headRot.z = 0;
         Quaternion q = new Quaternion();
@@ -196,11 +198,11 @@ public class BWPlayer : MonoBehaviour
         float yaw = rightStickYaw + mouseRotation.x + snapLook;
         if (invertLook)
         {
-            transform.rotation = Quaternion.Euler(-pitch, yaw, 0);
+            head.rotation = Quaternion.Euler(-pitch, yaw, 0);
         }
         else
         {
-            transform.rotation = Quaternion.Euler(pitch, yaw, 0);
+            head.rotation = Quaternion.Euler(pitch, yaw, 0);
         }
     }
 
